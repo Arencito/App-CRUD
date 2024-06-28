@@ -4,53 +4,50 @@ function IniciarBaseDatos()
   {
     var BtnGuardar = document.querySelector("#btn-guardar");
     BtnGuardar.addEventListener("click", AlmacenarContacto);
-   
-   var solicitud = indexedDB.open("Data");
 
-   solicitud.addEventListener("error", MostrarError);
-   solicitud.addEventListener("succes", Comenzar);
-   solicitud.addEventListener("upgradeneeded", CrearAlmacen);
+    var solicitud = indexedDB.open("Datos-De-Contactos");
+
+    solicitud.addEventListener("error", MostrarError);
+    solicitud.addEventListener("success", Comenzar);
+    solicitud.addEventListener("upgradeneeded", CrearAlmacen);
   }
 
-function MostrarError (evento)
-{
-    alert("Tenemos un ERROR: " + evento.code + " / " + evento.message);
-}
-function Comenzar (evento)
-{
-    bd = evento.target.result;
-}
+function MostrarError(evento) 
+  {
+      var error = evento.target.error;
+      alert("Tenemos un ERROR: " + error.code + " / " + error.message);
+  }
 
-function CrearAlmacen (evento)
-{
-    var basedatos = evento.target.result;
-    var almacen = basedatos.createObjectStore("Data", {keypath: "id"});
-    almacen.createIndex ("BuscarNombre", "nombre", {unique: false});
-}
+function Comenzar(evento)
+  {
+      bd = evento.target.result;
+  }
+
+function CrearAlmacen(evento)
+  {
+      var basededatos = evento.target.result;
+      var almacen = basededatos.createObjectStore("Contactos", {keyPath: "id"});
+      almacen.createIndex("BuscarNombre", "nombre", {unique: false});
+  }
+
 function AlmacenarContacto()
-{
-  var N = document.querySelector("#nombre").value;
-  var I = document.querySelector("#id").value;
-  var E = document.querySelector("#edad").value; 
+  {
+    var N = document.querySelector("#nombre").value;
+    var I = document.querySelector("#id").value;
+    var E = document.querySelector("#edad").value;
 
+    var transaccion = bd.transaction(["Contactos"], "readwrite");
+    var almacen = transaccion.objectStore("Contactos");
 
-  var transaccion = bd.transaction(["Contactos"], "read");
-  var almacen = transaccion.objectStore("Contactos");
+    almacen.add({
+                 nombre: N,
+                 id: I,
+                 edad: E
+               });
 
-  almacen.add({
-        nombre: N,
-        id: I,
-        edad: E
-  });
-
-  document.querySelector("#nombre").value = "";
-  document.querySelector("#id").value = ""; 
-  document.querySelector("#edad").value = ""; 
-
-
-
-}
-
+    document.querySelector("#nombre").value = "";
+    document.querySelector("#id").value = "";
+    document.querySelector("#edad").value = "";
+  }
 window.addEventListener("load", IniciarBaseDatos);
-
 
