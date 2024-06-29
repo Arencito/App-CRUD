@@ -51,3 +51,15 @@ function AlmacenarContacto()
   }
 window.addEventListener("load", IniciarBaseDatos);
 
+
+
+
+
+
+
+
+
+
+
+
+
